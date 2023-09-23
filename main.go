@@ -34,6 +34,6 @@ func displayStates(service *services.AssociationService) {
 func main() {
 	service := services.NewAssociationService()
 
-	// displayCountries(service)
+	displayCountries(service)
 	displayStates(service)
 }
