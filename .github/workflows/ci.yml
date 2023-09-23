@@ -47,6 +47,12 @@ jobs:
     - name: Test
       run: make test
 
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: Test Results
+        path: junit.xml
+
     - name: Test Summary
       uses: test-summary/action@v2
       with:
