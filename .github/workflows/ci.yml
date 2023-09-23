@@ -54,7 +54,7 @@ jobs:
       run: go generate ./...
 
     - name: Test
-      run: go test -v ./... | go-junit-report -set-exit-code > junit.xml
+      run: ginkgo --junit-report=junit.xml ./...
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v4
