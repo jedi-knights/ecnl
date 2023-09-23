@@ -10,5 +10,5 @@ type Organization struct {
 }
 
 func (o *Organization) ToString() string {
-	return fmt.Sprintf("Id: %d, Name: %s, SeasonId: %d, SeasonGroupId: %d", o.Id, o.Name, o.SeasonId, o.SeasonGroupId)
+	return fmt.Sprintf("Name: \"%s\", Id: %d, SeasonId: %d, SeasonGroupId: %d", o.Name, o.Id, o.SeasonId, o.SeasonGroupId)
 }

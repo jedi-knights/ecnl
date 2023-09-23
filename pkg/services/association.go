@@ -15,6 +15,8 @@ type AssociationService struct {
 	HttpClient *http.Client
 }
 
+var currentOrganizations []models.Organization
+
 func NewAssociationService() *AssociationService {
 	pHttpClient := &http.Client{}
 	return NewAssociationServiceWithClient(pHttpClient)
@@ -118,7 +120,7 @@ func (s *AssociationService) GetAllStates() ([]models.State, error) {
 	return output.States, nil
 }
 
-func (s *AssociationService) GetCurrentOrganizations() ([]models.Organization, error) {
+func (s *AssociationService) GetCurrentOrganizations(ecnlOnly bool) ([]models.Organization, error) {
 	var err error
 	var data []byte
 	var targetUrl string
@@ -126,6 +128,10 @@ func (s *AssociationService) GetCurrentOrganizations() ([]models.Organization, e
 	var output struct {
 		Result        string                `json:"result"`
 		Organizations []models.Organization `json:"data"`
+	}
+
+	if currentOrganizations != nil {
+		return currentOrganizations, nil
 	}
 
 	if targetUrl, err = s.GetUrl("/get-current-orgs-list"); err != nil {
@@ -159,10 +165,70 @@ func (s *AssociationService) GetCurrentOrganizations() ([]models.Organization, e
 	ecnlOrganizations := make([]models.Organization, 0)
 
 	for _, org := range output.Organizations {
-		if strings.Contains(org.Name, "ECNL") {
+		if ecnlOnly {
+			if strings.Contains(org.Name, "ECNL") {
+				ecnlOrganizations = append(ecnlOrganizations, org)
+			}
+		} else {
 			ecnlOrganizations = append(ecnlOrganizations, org)
 		}
 	}
 
-	return ecnlOrganizations, nil
+	currentOrganizations = ecnlOrganizations
+
+	return currentOrganizations, nil
+}
+
+func (s *AssociationService) GetOrganizationById(id int) (*models.Organization, error) {
+	var err error
+
+	if currentOrganizations == nil {
+		if currentOrganizations, err = s.GetCurrentOrganizations(false); err != nil {
+			return nil, err
+		}
+	}
+
+	for _, org := range currentOrganizations {
+		if org.Id == id {
+			return &org, nil
+		}
+	}
+
+	return nil, fmt.Errorf("organization id %d not found", id)
+}
+
+func (s *AssociationService) GetOrganizationByName(name string) (*models.Organization, error) {
+	var err error
+
+	if currentOrganizations == nil {
+		if _, err = s.GetCurrentOrganizations(false); err != nil {
+			return nil, err
+		}
+	}
+
+	for _, org := range currentOrganizations {
+		if org.Name == name {
+			return &org, nil
+		}
+	}
+
+	return nil, fmt.Errorf("organization name %s not found", name)
+}
+
+func (s *AssociationService) GetCurrentOrganizationNames() ([]string, error) {
+	var err error
+
+	if currentOrganizations == nil {
+		if _, err = s.GetCurrentOrganizations(false); err != nil {
+			return nil, err
+		}
+	}
+
+	orgNames := make([]string, 0)
+
+	for _, org := range currentOrganizations {
+		orgNames = append(orgNames, org.Name)
+	}
+
+	return orgNames, nil
 }

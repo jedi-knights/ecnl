@@ -15,5 +15,5 @@ type Club struct {
 }
 
 func (c *Club) ToString() string {
-	return fmt.Sprintf("OrgId: %d, OrgSeasonId: %d, ClubId: %d, Name: %s, City: %s, ClubLogo: %s, StateCode: %s, EventId: %d, EventCounts: %d", c.OrgId, c.OrgSeasonId, c.ClubId, c.Name, c.City, c.ClubLogo, c.StateCode, c.EventId, c.EventCounts)
+	return fmt.Sprintf("Name: \"%s\", OrgId: %d, OrgSeasonId: %d, ClubId: %d, City: \"%s\", StateCode: %s, EventId: %d, EventCounts: %d", c.Name, c.OrgId, c.OrgSeasonId, c.ClubId, c.City, c.StateCode, c.EventId, c.EventCounts)
 }
