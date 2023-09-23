@@ -63,8 +63,8 @@ jobs:
         report_paths: '**/junit.xml'
         fail_on_failure: true
         require_tests: true
-        annotate_notice: true
-        detailed_summary: true
+        annotate_notice: false
+        detailed_summary: false
 
     - name: Test Summary
       uses: test-summary/action@v2
