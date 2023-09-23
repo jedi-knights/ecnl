@@ -51,7 +51,7 @@ var _ = Describe("Association", func() {
 	Describe("GetCurrentOrganizations", func() {
 		It("should return all current organizations", func() {
 			// Act
-			organizations, err := pService.GetCurrentOrganizations()
+			organizations, err := pService.GetCurrentOrganizations(false)
 
 			// Assert
 			Expect(organizations).NotTo(BeNil())

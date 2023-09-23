@@ -10,7 +10,7 @@ var _ = Describe("Event", func() {
 	var pService *services.EventService
 
 	BeforeEach(func() {
-		pService = services.NewEventService()
+		pService = services.NewEventService(services.NewAssociationService())
 	})
 
 	AfterEach(func() {

@@ -6,32 +6,6 @@ import (
 	"github.com/jedi-knights/ecnl/pkg/services"
 )
 
-func displayCountries(service *services.AssociationService) {
-	var err error
-	var countries []models.Country
-
-	if countries, err = service.GetAllCountries(); err != nil {
-		panic(err)
-	}
-
-	for _, country := range countries {
-		println(country.ToString())
-	}
-}
-
-func displayStates(service *services.AssociationService) {
-	var err error
-	var states []models.State
-
-	if states, err = service.GetAllStates(); err != nil {
-		panic(err)
-	}
-
-	for _, state := range states {
-		println(state.ToString())
-	}
-}
-
 func displayOrganizations(ecnlOnly bool) {
 	var err error
 	var organizations []models.Organization
@@ -51,51 +25,6 @@ func displayOrganizations(ecnlOnly bool) {
 	for offset, organization := range organizations {
 		fmt.Printf("\t%d: %s\n", offset, organization.ToString())
 	}
-}
-
-func displayClubsForOrganization(orgName string, esvc *services.EventService, asvc *services.AssociationService) ([]models.Club, error) {
-	var err error
-	var pOrganization *models.Organization
-	var clubs []models.Club
-
-	if pOrganization, err = asvc.GetOrganizationByName(orgName); err != nil {
-		return nil, err
-	}
-
-	fmt.Printf("Getting clubs for organization [%s] ...\n", pOrganization.Name)
-	if clubs, err = esvc.GetClubsByOrganization(pOrganization); err != nil {
-		return nil, err
-	}
-
-	fmt.Printf("Clubs [%d]:\n", len(clubs))
-	for offset, club := range clubs {
-		fmt.Printf("\t%d: %s\n", offset, club.ToString())
-	}
-
-	return clubs, nil
-}
-
-func displayEvents(orgName string, esvc *services.EventService) ([]models.Event, error) {
-	var err error
-	var eventIds []int
-	var events []models.Event
-
-	if eventIds, err = esvc.GetEventIdsByOrgName(orgName); err != nil {
-		return nil, err
-	}
-
-	fmt.Printf("\nEvents [%d]:\n", len(eventIds))
-	for offset, eventId := range eventIds {
-		var pEvent *models.Event
-
-		if pEvent, err = esvc.GetEventById(eventId); err != nil {
-			return nil, err
-		}
-
-		fmt.Printf("\t%d: %s\n", offset, pEvent.ToString())
-	}
-
-	return events, nil
 }
 
 func probe(orgName string, esvc *services.EventService, asvc *services.AssociationService) error {
