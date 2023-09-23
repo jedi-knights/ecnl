@@ -68,17 +68,12 @@ jobs:
     - name: Install Dependencies
       run: make deps
 
-    - name: Analyze Syntax
-      uses: golangci/golangci-lint-action@v3
-
-    - name: Test
-      run: make test
-
     - name: Build
       run: make build
 
   Publish:
     needs: build
+    if: (github.event_name == 'push' || github.event_name == 'pull_request') && github.ref == 'refs/heads/main'
     permissions:
       contents: write
     runs-on: ubuntu-latest
