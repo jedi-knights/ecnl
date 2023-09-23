@@ -28,8 +28,11 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: Analyze Syntax
-      uses: golangci/golangci-lint-action@v3
+    - name: Install Dependencies
+      run: make deps
+
+    - name: Lint
+      run: make lint
 
   Test:
     runs-on: ubuntu-latest
