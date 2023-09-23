@@ -66,13 +66,6 @@ jobs:
         annotate_notice: false
         detailed_summary: false
 
-    - name: Test Summary
-      uses: test-summary/action@v2
-      with:
-        paths: |
-          ./junit.xml
-      if: always()
-
   Build:
     needs: [analyze, test]
     runs-on: ubuntu-latest
