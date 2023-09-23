@@ -22,3 +22,6 @@ go.work
 
 # IntelliJ IDEA
 .idea
+
+# Test Results
+junit.xml
