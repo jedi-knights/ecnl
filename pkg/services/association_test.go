@@ -51,17 +51,17 @@ var _ = Describe("Association", func() {
 	Describe("GetCurrentOrganizations", func() {
 		It("should return all current organizations", func() {
 			// Act
-			organizations, err := pService.GetCurrentOrganizations(false)
+			organizations, err := pService.GetCurrentOrganizations(true)
 
 			// Assert
 			Expect(organizations).NotTo(BeNil())
 			Expect(len(organizations)).To(Equal(6))
-			Expect(organizations[0].ToString()).To(Equal("Id: 22, Name: BOYS PRE-ECNL, SeasonId: 56, SeasonGroupId: 8"))
-			Expect(organizations[1].ToString()).To(Equal("Id: 12, Name: ECNL Boys, SeasonId: 50, SeasonGroupId: 8"))
-			Expect(organizations[2].ToString()).To(Equal("Id: 16, Name: ECNL Boys Regional League, SeasonId: 52, SeasonGroupId: 8"))
-			Expect(organizations[3].ToString()).To(Equal("Id: 9, Name: ECNL Girls, SeasonId: 49, SeasonGroupId: 8"))
-			Expect(organizations[4].ToString()).To(Equal("Id: 13, Name: ECNL Girls Regional League, SeasonId: 51, SeasonGroupId: 8"))
-			Expect(organizations[5].ToString()).To(Equal("Id: 21, Name: GIRLS PRE-ECNL, SeasonId: 55, SeasonGroupId: 8"))
+			Expect(organizations[0].ToString()).To(Equal("Name: \"BOYS PRE-ECNL\", Id: 22, SeasonId: 56, SeasonGroupId: 8"))
+			Expect(organizations[1].ToString()).To(Equal("Name: \"ECNL Boys\", Id: 12, SeasonId: 50, SeasonGroupId: 8"))
+			Expect(organizations[2].ToString()).To(Equal("Name: \"ECNL Boys Regional League\", Id: 16, SeasonId: 52, SeasonGroupId: 8"))
+			Expect(organizations[3].ToString()).To(Equal("Name: \"ECNL Girls\", Id: 9, SeasonId: 49, SeasonGroupId: 8"))
+			Expect(organizations[4].ToString()).To(Equal("Name: \"ECNL Girls Regional League\", Id: 13, SeasonId: 51, SeasonGroupId: 8"))
+			Expect(organizations[5].ToString()).To(Equal("Name: \"GIRLS PRE-ECNL\", Id: 21, SeasonId: 55, SeasonGroupId: 8"))
 
 			Expect(err).NotTo(HaveOccurred())
 		})
