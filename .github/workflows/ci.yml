@@ -35,6 +35,7 @@ jobs:
       run: make build
 
   release:
+    needs: build
     permissions:
       contents: write
     runs-on: ubuntu-latest
