@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Tds", func() {
+var _ = Describe("Total Global Sports", func() {
 	It("blue sky sunny day", func() {
 		Expect(true).To(BeTrue())
 	})
