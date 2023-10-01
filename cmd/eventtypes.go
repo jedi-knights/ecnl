@@ -25,16 +25,13 @@ import (
 	"fmt"
 	"github.com/jedi-knights/ecnl/pkg/models"
 	"github.com/jedi-knights/ecnl/pkg/services"
-
 	"github.com/spf13/cobra"
 )
 
-var ecnlOnly bool
-
-// orgsCmd represents the orgs command
-var orgsCmd = &cobra.Command{
-	Use:   "orgs",
-	Short: "Display all organizations",
+// eventtypesCmd represents the eventtypes command
+var eventtypesCmd = &cobra.Command{
+	Use:   "eventtypes",
+	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -42,39 +39,33 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var err error
-		var organizations []models.Organization
+		var (
+			err        error
+			eventTypes []models.EventType
+		)
 
-		service := services.NewTGSService()
-
-		if organizations, err = service.Organizations(ecnlOnly); err != nil {
+		if eventTypes, err = services.NewTGSService().EventTypes(); err != nil {
 			panic(err)
 		}
 
-		if ecnlOnly {
-			fmt.Printf("There are a total of %d ECNL organizations.\n", len(organizations))
-		} else {
-			fmt.Printf("There are a total of %d organizations.\n", len(organizations))
-		}
+		fmt.Printf("There are a total of %d event types.\n", len(eventTypes))
 
-		for offset, organization := range organizations {
-			fmt.Printf("\t%d: %s\n", offset, organization.String())
+		for _, eventType := range eventTypes {
+			fmt.Printf("\t%s\n", eventType.String())
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(orgsCmd)
+	rootCmd.AddCommand(eventtypesCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// orgsCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// eventtypesCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// orgsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	orgsCmd.Flags().BoolVarP(&ecnlOnly, "ecnl", "e", false, "Only show ECNL organizations")
+	// eventtypesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

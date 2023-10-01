@@ -7,6 +7,6 @@ type EventType struct {
 	Name string `json:"eventType"`
 }
 
-func (e *EventType) ToString() string {
+func (e *EventType) String() string {
 	return fmt.Sprintf("Id: %d, Name: %s", e.Id, e.Name)
 }

@@ -9,6 +9,6 @@ type Organization struct {
 	SeasonGroupId int    `json:"orgSeasonGroupID"`
 }
 
-func (o *Organization) ToString() string {
+func (o *Organization) String() string {
 	return fmt.Sprintf("Name: \"%s\", Id: %d, SeasonId: %d, SeasonGroupId: %d", o.Name, o.Id, o.SeasonId, o.SeasonGroupId)
 }

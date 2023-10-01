@@ -7,6 +7,6 @@ type State struct {
 	Name string `json:"stateName"`
 }
 
-func (s *State) ToString() string {
+func (s *State) String() string {
 	return fmt.Sprintf("Id: %d, Name: %s", s.Id, s.Name)
 }
