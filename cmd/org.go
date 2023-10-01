@@ -25,16 +25,16 @@ import (
 	"fmt"
 	"github.com/jedi-knights/ecnl/pkg/models"
 	"github.com/jedi-knights/ecnl/pkg/services"
-
 	"github.com/spf13/cobra"
 )
 
-var ecnlOnly bool
+var id int
+var name string
 
-// orgsCmd represents the orgs command
-var orgsCmd = &cobra.Command{
-	Use:   "orgs",
-	Short: "Display all organizations",
+// orgCmd represents the org command
+var orgCmd = &cobra.Command{
+	Use:   "org",
+	Short: "Display a single organization",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -42,39 +42,48 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var err error
-		var organizations []models.Organization
+		var (
+			err error
+			org *models.Organization
+		)
 
-		service := services.NewTGSService()
+		if id > 0 {
+			// Get the organization by Id and display it
+			if org, err = services.NewTGSService().OrganizationById(id); err != nil {
+				panic(err)
+			}
 
-		if organizations, err = service.Organizations(ecnlOnly); err != nil {
-			panic(err)
-		}
-
-		if ecnlOnly {
-			fmt.Printf("There are a total of %d ECNL organizations.\n", len(organizations))
+			fmt.Printf("%s\n", org.String())
 		} else {
-			fmt.Printf("There are a total of %d organizations.\n", len(organizations))
-		}
+			if name != "" {
+				// Get the organization by name and display it
+				if org, err = services.NewTGSService().OrganizationByName(name); err != nil {
+					panic(err)
+				}
 
-		for offset, organization := range organizations {
-			fmt.Printf("\t%d: %s\n", offset, organization.String())
+				fmt.Printf("%s\n", org.String())
+			} else {
+				fmt.Println("You must specify either an id or a name")
+			}
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(orgsCmd)
+	rootCmd.AddCommand(orgCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// orgsCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// orgCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// orgsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// orgCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	orgsCmd.Flags().BoolVarP(&ecnlOnly, "ecnl", "e", false, "Only show ECNL organizations")
+	orgCmd.Flags().IntVarP(&id, "id", "i", 0, "The identifier of the organization")
+	orgCmd.Flags().StringVarP(&name, "name", "n", "", "The name of the organization")
+
+	orgCmd.MarkFlagsMutuallyExclusive("id", "name")
 }
