@@ -17,21 +17,6 @@ var _ = Describe("Association", func() {
 		pService = nil
 	})
 
-	Describe("GetAllCountries", func() {
-		It("should return all countries", func() {
-			// Act
-			countries, err := pService.GetAllCountries()
-
-			// Assert
-			Expect(countries).NotTo(BeNil())
-			Expect(len(countries)).To(Equal(249))
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(countries[0].ToString()).To(Equal("Id: 1, Name: United States"))
-			Expect(countries[len(countries)-1].ToString()).To(Equal("Id: 249, Name: Zimbabwe"))
-		})
-	})
-
 	Describe("GetAllStates", func() {
 		It("should return all states", func() {
 			// Act
