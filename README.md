@@ -1,5 +1,8 @@
-# ecnl
+# ECNL Module
+
 A Go module to provide access to ECNL data.
+
+![GitHub Actions](https://github.com/jedi-knights/ecnl/workflows/CI/badge.svg)
 
 ## Get Organization List
 
