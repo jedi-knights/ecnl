@@ -4,7 +4,7 @@ name: Build Angular
 on:
   push:
     paths:
-      - 'client/**'
+    - "client/**"
 
 jobs:
   build:
