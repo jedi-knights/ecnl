@@ -1,11 +1,8 @@
 
 name: Build Angular
-on:
-  workflow_dispatch: null
 
+on:
   push:
-    branches:
-      - '*'
     paths:
       - 'client/**'
 
