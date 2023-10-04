@@ -1,6 +1,8 @@
 
 name: Build Angular
 on:
+  workflow_dispatch: null
+
   push:
     branches:
       - '*'
