@@ -8,8 +8,9 @@ import "github.com/labstack/echo/v4"
 // @Tags RPI
 // @Accept json
 // @Produce json
+// @Param ageGroup path string true "Age Group"
 // @Success 200 {array} models.TeamRPI
-// @Router /v1/rpi [get]
+// @Router /v1/rpi/{ageGroup} [get]
 func HandleGetRPIRankings(c echo.Context) error {
 	//gender := c.QueryParam("gender")
 	//ageGroup := c.QueryParam("ageGroup")
