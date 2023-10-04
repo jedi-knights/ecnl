@@ -25,3 +25,6 @@ lint:
 
 run: swagger
 	go run main.go api
+
+docker-client:
+	docker build -t ecnl-client ./client
