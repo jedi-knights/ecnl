@@ -27,4 +27,4 @@ run: swagger
 	go run main.go api
 
 docker-client:
-	docker build -t ecnl-client ./client
+	docker build -t jediknights/ecnl-client:latest ./client

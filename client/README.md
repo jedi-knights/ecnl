@@ -33,3 +33,4 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - [Angular Material](https://material.angular.io/)
 - [Dockerizing an Angular App](https://mherman.org/blog/dockerizing-an-angular-app/)
 - [Building Angular Apps Using GitHub Actions](https://betterprogramming.pub/building-angular-apps-using-github-actions-bf916b56ed0c)
+
