@@ -3,7 +3,7 @@ name: Build Angular
 on:
   push:
     branches:
-      - *
+      - '*'
     paths:
       - client/**
 
