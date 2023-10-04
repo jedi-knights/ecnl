@@ -5,6 +5,7 @@ on:
   push:
     paths:
     - "client/**"
+    - ".github/workflows/client.yml"
 
 jobs:
   build:
@@ -35,7 +36,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run build --if-present
+        run: npm run build:prod --if-present
 
       - name: Push Build to Releases
         uses: ncipollo/release-action@v1
