@@ -471,7 +471,7 @@ func (dao *MatchEventDAO) Sync(matchEvent models.MatchEvent) error {
 
 	if !answer {
 		// The match event doesn't exist.
-		log.Printf("inserting match event '%s' ...", matchEvent.MatchId)
+		log.Printf("inserting match event '%d' ...", matchEvent.MatchId)
 		if _, err = dao.col.InsertOne(dao.ctx, matchEvent); err != nil {
 			return err
 		}

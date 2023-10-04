@@ -116,7 +116,7 @@ func (r *RPI) GenerateRankings(ageGroup string) ([]models.RPIRankingData, error)
 	})
 
 	// Update the ranking
-	for i, _ := range data {
+	for i := range data {
 		data[i].Ranking = i + 1
 	}
 

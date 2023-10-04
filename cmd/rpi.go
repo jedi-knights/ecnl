@@ -75,5 +75,5 @@ func init() {
 	// rpiCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	rpiCmd.PersistentFlags().StringVarP(&ageGroup, "age", "a", "", "Age group (e.g. G2009)")
-	rpiCmd.MarkPersistentFlagRequired("age")
+	_ = rpiCmd.MarkPersistentFlagRequired("age")
 }
