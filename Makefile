@@ -2,6 +2,12 @@ clean:
 	rm -f ecnl
 	rm -f junit.xml
 	rm -f ecnl
+	rm -rf output
+
+swagger:
+	~/go/bin/swag init -g main.go
+
+docs:
 
 deps:
 	go mod download
@@ -16,3 +22,6 @@ test: clean
 
 lint:
 	golangci-lint run ./...
+
+run: swagger
+	go run main.go api
