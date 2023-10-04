@@ -29,3 +29,5 @@ junit.xml
 package-lock.json
 
 node_modules/
+
+client/dist
