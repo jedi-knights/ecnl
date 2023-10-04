@@ -99,7 +99,7 @@ func (dao *MatchEventDAO) GetById(id int) (*models.MatchEvent, error) {
 
 	if err = dao.col.FindOne(dao.ctx, bson.M{"matchid": id}).Decode(&matchEvents); err != nil {
 		if err.Error() == "mongo: no documents in result" {
-			return nil, nil
+			return nil, fmt.Errorf("match event not found")
 		}
 
 		return nil, err

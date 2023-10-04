@@ -33,6 +33,7 @@ type GlobalService struct {
 
 func NewTGSService() *GlobalService {
 	pHttpClient := &http.Client{}
+
 	return NewTGSServiceWithClient(pHttpClient)
 }
 
@@ -67,14 +68,7 @@ func (s *GlobalService) States() ([]models.State, error) {
 	if pResponse, err = s.HttpClient.Get(targetUrl); err != nil {
 		return nil, fmt.Errorf("Error getting countries: %v\n", err)
 	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Println(err.Error())
-			panic("an error occurred while attempting to close the body")
-		}
-	}(pResponse.Body)
+	defer pResponse.Body.Close()
 
 	if pResponse.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("Invalid status code %d: ", pResponse.StatusCode)
@@ -111,13 +105,7 @@ func (s *GlobalService) Countries() ([]models.Country, error) {
 		return nil, fmt.Errorf("Error getting countries: %v\n", err)
 	}
 
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Println(err.Error())
-			panic("an error occured while attempting to close the body")
-		}
-	}(pResponse.Body)
+	defer pResponse.Body.Close()
 
 	if pResponse.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("Invalid status code %d: ", pResponse.StatusCode)
@@ -166,13 +154,7 @@ func (s *GlobalService) Organizations(ecnlOnly bool) ([]models.Organization, err
 		return nil, fmt.Errorf("Error getting current organizations: %v\n", err)
 	}
 
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Println(err.Error())
-			panic("an error occurred while attempting to close the body")
-		}
-	}(pResponse.Body)
+	defer pResponse.Body.Close()
 
 	if pResponse.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("Invalid status code %d: ", pResponse.StatusCode)
