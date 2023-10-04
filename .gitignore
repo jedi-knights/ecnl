@@ -33,3 +33,5 @@ node_modules/
 client/dist
 
 .angular
+
+output
