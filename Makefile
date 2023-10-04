@@ -25,3 +25,6 @@ lint:
 
 run: swagger
 	go run main.go api
+
+docker-mongo:
+	docker run -it --rm --name mongodb -v ~/mongo/data:/data/db -p 27017:27017 mongo:latest
