@@ -11,6 +11,6 @@ type Event struct {
 	OrgSeasonName string `json:"orgSeasonName"`
 }
 
-func (e *Event) ToString() string {
+func (e *Event) String() string {
 	return fmt.Sprintf("Name: \"%s\", Id: %d, OrgId: %d, OrgName: %s, OrgSeasonId: %d, OrgSeasonName: \"%s\"", e.Name, e.Id, e.OrgId, e.OrgName, e.OrgSeasonId, e.OrgSeasonName)
 }

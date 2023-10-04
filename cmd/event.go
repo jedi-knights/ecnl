@@ -23,18 +23,14 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/jedi-knights/ecnl/pkg/models"
-	"github.com/jedi-knights/ecnl/pkg/services"
 
 	"github.com/spf13/cobra"
 )
 
-var ecnlOnly bool
-
-// orgsCmd represents the orgs command
-var orgsCmd = &cobra.Command{
-	Use:   "orgs",
-	Short: "Display all organizations",
+// eventCmd represents the event command
+var eventCmd = &cobra.Command{
+	Use:   "event",
+	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -42,41 +38,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var (
-			err           error
-			organizations []models.Organization
-		)
-
-		service := services.NewTGSService()
-
-		if organizations, err = service.Organizations(ecnlOnly); err != nil {
-			panic(err)
-		}
-
-		if ecnlOnly {
-			fmt.Printf("There are a total of %d ECNL organizations.\n", len(organizations))
-		} else {
-			fmt.Printf("There are a total of %d organizations.\n", len(organizations))
-		}
-
-		for _, organization := range organizations {
-			fmt.Printf("\t%s\n", organization.String())
-		}
+		fmt.Println("event called")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(orgsCmd)
+	rootCmd.AddCommand(eventCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// orgsCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// eventCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// orgsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	orgsCmd.Flags().BoolVarP(&ecnlOnly, "ecnl", "e", false, "Only show ECNL organizations")
+	// eventCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

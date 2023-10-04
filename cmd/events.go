@@ -25,16 +25,14 @@ import (
 	"fmt"
 	"github.com/jedi-knights/ecnl/pkg/models"
 	"github.com/jedi-knights/ecnl/pkg/services"
-
 	"github.com/spf13/cobra"
+	"os"
 )
 
-var ecnlOnly bool
-
-// orgsCmd represents the orgs command
-var orgsCmd = &cobra.Command{
-	Use:   "orgs",
-	Short: "Display all organizations",
+// eventsCmd represents the events command
+var eventsCmd = &cobra.Command{
+	Use:   "events",
+	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -43,40 +41,57 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			err           error
-			organizations []models.Organization
+			err    error
+			events []models.Event
 		)
 
 		service := services.NewTGSService()
 
-		if organizations, err = service.Organizations(ecnlOnly); err != nil {
-			panic(err)
-		}
+		if orgId > 0 {
+			if orgName != "" {
+				fmt.Println("Must specify either orgId or orgName, not both")
+				os.Exit(2)
+			}
 
-		if ecnlOnly {
-			fmt.Printf("There are a total of %d ECNL organizations.\n", len(organizations))
+			fmt.Printf("Getting events for orgId %d ...\n", orgId)
+			if events, err = service.EventsByOrgId(orgId); err != nil {
+				panic(err)
+			}
+		} else if orgName != "" {
+			fmt.Printf("Getting events for orgName '%s' ...\n", orgName)
+			if events, err = service.EventsByOrgName(orgName); err != nil {
+				panic(err)
+			}
 		} else {
-			fmt.Printf("There are a total of %d organizations.\n", len(organizations))
+			fmt.Printf("Getting events for all organizations ...\n")
+			if events, err = service.Events(); err != nil {
+				panic(err)
+			}
 		}
 
-		for _, organization := range organizations {
-			fmt.Printf("\t%s\n", organization.String())
+		fmt.Printf("There are a total of %d events.\n", len(events))
+		for _, event := range events {
+			fmt.Printf("\t%s\n", event.String())
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(orgsCmd)
+	rootCmd.AddCommand(eventsCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// orgsCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// eventsCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// orgsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// eventsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	orgsCmd.Flags().BoolVarP(&ecnlOnly, "ecnl", "e", false, "Only show ECNL organizations")
+	eventsCmd.Flags().IntVarP(&orgId, "id", "i", 0, "Organization ID")
+	_ = eventsCmd.MarkFlagRequired("orgId")
+
+	eventsCmd.Flags().StringVarP(&orgName, "name", "n", "", "Organization Name")
+	_ = eventsCmd.MarkFlagRequired("orgName")
 }

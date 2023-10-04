@@ -22,19 +22,19 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-	"github.com/jedi-knights/ecnl/pkg/models"
-	"github.com/jedi-knights/ecnl/pkg/services"
-
+	_ "github.com/jedi-knights/ecnl/docs"
+	v12 "github.com/jedi-knights/ecnl/pkg/routes/v1"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 	"github.com/spf13/cobra"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-var ecnlOnly bool
-
-// orgsCmd represents the orgs command
-var orgsCmd = &cobra.Command{
-	Use:   "orgs",
-	Short: "Display all organizations",
+// apiCmd represents the api command
+var apiCmd = &cobra.Command{
+	Use:   "api",
+	Short: "A Restful API for providing ECNL data",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -42,41 +42,39 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var (
-			err           error
-			organizations []models.Organization
-		)
+		e := echo.New()
 
-		service := services.NewTGSService()
+		e.HideBanner = true
+		e.Logger.SetLevel(log.DEBUG)
 
-		if organizations, err = service.Organizations(ecnlOnly); err != nil {
-			panic(err)
-		}
+		e.Logger.Info("Starting server")
 
-		if ecnlOnly {
-			fmt.Printf("There are a total of %d ECNL organizations.\n", len(organizations))
-		} else {
-			fmt.Printf("There are a total of %d organizations.\n", len(organizations))
-		}
+		e.Use(middleware.CORS())
 
-		for _, organization := range organizations {
-			fmt.Printf("\t%s\n", organization.String())
-		}
+		e.Pre(middleware.RemoveTrailingSlash())
+		e.Pre(middleware.Logger())
+
+		v1 := e.Group("/api/v1")
+
+		v1.GET("/health", v12.HandleHealthCheck)
+		v1.GET("/version", v12.HandleVersion)
+
+		e.GET("/swagger/*", echoSwagger.WrapHandler)
+
+		e.Logger.Fatal(e.Start(":8081"))
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(orgsCmd)
+	rootCmd.AddCommand(apiCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// orgsCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// apiCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// orgsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	orgsCmd.Flags().BoolVarP(&ecnlOnly, "ecnl", "e", false, "Only show ECNL organizations")
+	// apiCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
