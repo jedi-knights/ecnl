@@ -9,7 +9,11 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "omar.crosby@gmail.com"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -38,7 +42,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/rpi": {
+        "/v1/rpi/{division}": {
             "get": {
                 "description": "Calculates the RPI rankings for all teams",
                 "consumes": [
@@ -51,13 +55,34 @@ const docTemplate = `{
                     "RPI"
                 ],
                 "summary": "Examines the schedule and calculates the RPI rankings for all teams",
+                "parameters": [
+                    {
+                        "enum": [
+                            "G2006/2005",
+                            "G2008",
+                            "G2009",
+                            "G2010",
+                            "G2011",
+                            "B2006/2005",
+                            "B2008",
+                            "B2009",
+                            "B2010",
+                            "B2011"
+                        ],
+                        "type": "string",
+                        "description": "Division",
+                        "name": "division",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.TeamRPI"
+                                "$ref": "#/definitions/models.RPIRankingData"
                             }
                         }
                     }
@@ -89,14 +114,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.TeamRPI": {
+        "models.RPIRankingData": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
+                "ranking": {
+                    "type": "integer"
                 },
-                "value": {
+                "rpi": {
                     "type": "number"
+                },
+                "teamName": {
+                    "type": "string"
                 }
             }
         },
@@ -121,12 +149,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/api",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "ECNL API",
+	Description:      "This is a server that provides ECNL related information.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

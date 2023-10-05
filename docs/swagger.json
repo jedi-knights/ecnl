@@ -1,8 +1,16 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is a server that provides ECNL related information.",
+        "title": "ECNL API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "omar.crosby@gmail.com"
+        },
+        "version": "1.0"
     },
+    "basePath": "/api",
     "paths": {
         "/v1/health": {
             "get": {
@@ -27,7 +35,7 @@
                 }
             }
         },
-        "/v1/rpi": {
+        "/v1/rpi/{division}": {
             "get": {
                 "description": "Calculates the RPI rankings for all teams",
                 "consumes": [
@@ -40,13 +48,34 @@
                     "RPI"
                 ],
                 "summary": "Examines the schedule and calculates the RPI rankings for all teams",
+                "parameters": [
+                    {
+                        "enum": [
+                            "G2006/2005",
+                            "G2008",
+                            "G2009",
+                            "G2010",
+                            "G2011",
+                            "B2006/2005",
+                            "B2008",
+                            "B2009",
+                            "B2010",
+                            "B2011"
+                        ],
+                        "type": "string",
+                        "description": "Division",
+                        "name": "division",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.TeamRPI"
+                                "$ref": "#/definitions/models.RPIRankingData"
                             }
                         }
                     }
@@ -78,14 +107,17 @@
         }
     },
     "definitions": {
-        "models.TeamRPI": {
+        "models.RPIRankingData": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
+                "ranking": {
+                    "type": "integer"
                 },
-                "value": {
+                "rpi": {
                     "type": "number"
+                },
+                "teamName": {
+                    "type": "string"
                 }
             }
         },
