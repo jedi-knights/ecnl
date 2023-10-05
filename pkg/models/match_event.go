@@ -5,7 +5,7 @@ import "fmt"
 type MatchEvent struct {
 	MatchId        int    `json:"matchID"`
 	GameDate       string `json:"gameDate"`
-	HomeTeamID     int    `json:"homeTeamID"`
+	HomeTeamId     int    `json:"homeTeamID"`
 	HomeTeamName   string `json:"homeTeam"`
 	HomeTeamClubId int    `json:"homeTeamClubID"`
 	HomeTeamScore  int    `json:"homeTeamScore"`

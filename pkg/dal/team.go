@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
+	"time"
 )
 
 type TeamDAOer interface {
@@ -24,6 +25,7 @@ type TeamDAOer interface {
 	ExistsById(id int) (bool, error)
 	Sync(team models.Team) error
 	SyncAll(teams []*models.Team) error
+	AppendRPIRanking(timestamp time.Time, data models.RPIRankingData) error
 }
 
 // TeamDAO is the data access object for teams.
@@ -339,4 +341,44 @@ func (dao *TeamDAO) SyncAll(teams []*models.Team) error {
 	}
 
 	return nil
+}
+
+// AppendRPIRanking appends an RPI ranking to a team.
+func (dao *TeamDAO) AppendRPIRanking(timestamp time.Time, data models.RPIRankingData) error {
+	var (
+		err          error
+		updateResult *mongo.UpdateResult
+	)
+
+	log.Printf("appending RPI ranking - %s", data.String())
+
+	rpiHistoryItem := models.NewRPIEvent(timestamp, data)
+
+	filter := bson.M{"id": data.TeamId}
+	update := bson.M{
+		"$push": bson.M{
+			"rpi_history": rpiHistoryItem,
+		},
+	}
+
+	if updateResult, err = dao.col.UpdateOne(dao.ctx, filter, update); err != nil {
+		return err
+	}
+
+	// Check to see if the update was successful.
+	if updateResult.MatchedCount != 1 {
+		return fmt.Errorf("update failed, matched %d - %s", updateResult.MatchedCount, data.String())
+	}
+
+	// The update was successful.
+	log.Printf("team update successful: %v", updateResult)
+
+	return nil
+}
+
+// MapTeamName maps a team name using translations from Git.
+// https://raw.githubusercontent.com/ocrosby/soccer-data/main/org/club_translations.json
+func MapTeamName(string input) (string, error) {
+
+	return "", fmt.Errorf("not implemented")
 }
