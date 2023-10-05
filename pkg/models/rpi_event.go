@@ -2,17 +2,16 @@ package models
 
 import (
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type RPIEvent struct {
-	Id        primitive.ObjectID `bson:"_id" json:"id,omitempty"`
-	TeamId    int                `bson:"team_id" json:"team_id"`
-	TeamName  string             `bson:"team_name" json:"team_name"`
-	Timestamp time.Time          `bson:"timestamp" json:"timestamp"`
-	Ranking   int                `bson:"ranking" json:"ranking"`
-	Value     float64            `bson:"rpi" json:"rpi"`
+	// Id        primitive.ObjectID `bson:"_id" json:"id"`
+	TeamId    int       `bson:"team_id" json:"team_id"`
+	TeamName  string    `bson:"team_name" json:"team_name"`
+	Timestamp time.Time `bson:"timestamp" json:"timestamp"`
+	Ranking   int       `bson:"ranking" json:"ranking"`
+	Value     float64   `bson:"rpi" json:"rpi"`
 }
 
 func NewRPIEvent(timestamp time.Time, data RPIRankingData) *RPIEvent {
