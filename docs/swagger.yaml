@@ -1,10 +1,13 @@
+basePath: /api
 definitions:
-  models.TeamRPI:
+  models.RPIRankingData:
     properties:
-      name:
-        type: string
-      value:
+      ranking:
+        type: integer
+      rpi:
         type: number
+      teamName:
+        type: string
     type: object
   responses.HealthCheckResponse:
     properties:
@@ -17,7 +20,13 @@ definitions:
         type: string
     type: object
 info:
-  contact: {}
+  contact:
+    email: omar.crosby@gmail.com
+    name: API Support
+  description: This is a server that provides ECNL related information.
+  termsOfService: http://swagger.io/terms/
+  title: ECNL API
+  version: "1.0"
 paths:
   /v1/health:
     get:
@@ -34,11 +43,28 @@ paths:
       summary: Health Check
       tags:
       - Admin
-  /v1/rpi:
+  /v1/rpi/{division}:
     get:
       consumes:
       - application/json
       description: Calculates the RPI rankings for all teams
+      parameters:
+      - description: Division
+        enum:
+        - G2006/2005
+        - G2008
+        - G2009
+        - G2010
+        - G2011
+        - B2006/2005
+        - B2008
+        - B2009
+        - B2010
+        - B2011
+        in: path
+        name: division
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -46,7 +72,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.TeamRPI'
+              $ref: '#/definitions/models.RPIRankingData'
             type: array
       summary: Examines the schedule and calculates the RPI rankings for all teams
       tags:

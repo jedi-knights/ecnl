@@ -4,6 +4,89 @@ A Go module to provide access to ECNL data.
 
 ![GitHub Actions](https://github.com/jedi-knights/ecnl/workflows/CI/badge.svg)
 
+## Local Development
+
+### Requirements 
+
+In order to get setup to develop in this project there are a number of requirements that need to be met 
+by your development environment.  Although it is possible to set yourself up in other ways I would 
+recommend that you follow the instructions below.
+
+* [Homebrew Package Manager](https://brew.sh/)
+* [OpenSSL](https://www.openssl.org/)
+* [Node Version Manager](https://github.com/nvm-sh/nvm)
+* [The Go Programming Language](https://go.dev/)
+
+
+#### Setting up Homebrew
+
+The following command will utilize curl to get the Homebrew install script over https and immediately
+execute via Bash on your machine.
+
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+
+#### Setting up the Node Version Manager
+
+Unfortunately the Node Version Manager does not work with Homebrew.  You will need to install it manually.
+
+```sh
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+```
+
+Installing Go and OpenSSL using Homebrew:
+
+```sh
+brew install go
+brew install openssl
+```
+
+## SSL Setup
+
+To use HTTPS with the Echo server, we need to create and configure an HTTPS server using the 'net/http' package and then use it as a handler for the Echo router.
+
+Steps to set up HTTPS:
+
+1. Generate SSL/TLS Certificates
+2. Import Required Packages
+3. Configure the Echo Server with HTTPS
+4. Register routes and handlers as needed within the main function
+5. Start the Echo server
+
+Remember to replace "cert.pem" and "key.pem" with the actual paths to your SSL certificate and private key files.
+Additionally, make sure that your firewall allows traffic on port 443 (the default HTTPS port).
+
+Once the server is configured with HTTPS, it will listen for secure HTTPS connections on port 443, and you 
+can access it using the https protocol.
+
+
+### Generating SSL/TLS Certificates
+
+You need SSL/TLS certificates to enable HTTPS.  You can either purchase a certificate from a certificate authority
+or create a self-signed certificate for testing purposes.
+
+In order to create a self-signed certificate you will need OpenSSL.  If you don't have it and are 
+using Homebrew, you can install it with the following command, otherwise see https://www.openssl.org/.
+
+```sh
+brew install openssl
+```
+
+Creating a self-signed certificate using OpenSSL:
+
+```sh
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
+```
+
+
+
+
+This command generates a self-signed certificate ('cert.pem') and a private key ('key.pem') and saves them in the current directory.
+These files can be used for HTTPS.
+
+
 ## Get Organization List
 
 GET /api/Script/get-org-club-list-by-orgID/{orgID}
