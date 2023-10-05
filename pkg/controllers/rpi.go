@@ -47,11 +47,9 @@ func (r *RPI) GenerateRankings(ageGroup string) ([]models.RPIRankingData, error)
 
 	// create collection
 	matchesCollection := database.Collection("matches")
-	rpiEventsCollection := database.Collection("rpi_events")
 
 	// create data access objects
 	matchDAO := dal.NewMatchEventDAO(ctx, matchesCollection)
-	rpiEventDAO := dal.NewRPIEventDAO(ctx, rpiEventsCollection)
 
 	// This should return with the latest matches for the ECNL
 	if matches, err = matchDAO.GetECNLByAgeGroup(ageGroup); err != nil {
@@ -106,7 +104,6 @@ func (r *RPI) GenerateRankings(ageGroup string) ([]models.RPIRankingData, error)
 	// at this point the match data is loaded and RPI values can be computed
 
 	// Get the list of teams then calculate the RPI for each team.
-	currentTime := time.Now()
 	for _, teamName := range teamNames {
 		if teamName == "" {
 			continue
@@ -137,19 +134,6 @@ func (r *RPI) GenerateRankings(ageGroup string) ([]models.RPIRankingData, error)
 	// Update the ranking
 	for i := range data {
 		data[i].Ranking = i + 1
-
-		// Attempt to append the RPI ranking
-		var event = models.RPIEvent{
-			Timestamp: currentTime,
-			TeamId:    data[i].TeamId,
-			TeamName:  data[i].TeamName,
-			Ranking:   data[i].Ranking,
-			Value:     data[i].RPI,
-		}
-
-		if err = rpiEventDAO.Create(event); err != nil {
-			log.Println(err)
-		}
 	}
 
 	return data, nil
