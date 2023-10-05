@@ -375,10 +375,3 @@ func (dao *TeamDAO) AppendRPIRanking(timestamp time.Time, data models.RPIRanking
 
 	return nil
 }
-
-// MapTeamName maps a team name using translations from Git.
-// https://raw.githubusercontent.com/ocrosby/soccer-data/main/org/club_translations.json
-func MapTeamName(string input) (string, error) {
-
-	return "", fmt.Errorf("not implemented")
-}
