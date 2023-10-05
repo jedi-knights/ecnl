@@ -31,7 +31,6 @@ import "github.com/jedi-knights/ecnl/cmd"
 // @contact.name API Support
 // @contact.email omar.crosby@gmail.com
 
-// @host localhost
 // @BasePath /api
 func main() {
 	cmd.Execute()
