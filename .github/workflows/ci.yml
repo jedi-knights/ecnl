@@ -78,7 +78,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pwd
-          ls          
+          ls
           go install go.uber.org/mock/mockgen@latest
           go install github.com/jstemmer/go-junit-report@latest
           go install github.com/onsi/ginkgo/v2/ginkgo
@@ -142,5 +142,10 @@ jobs:
         uses: go-semantic-release/action@v1
         with:
           hooks: goreleaser
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          update-file: VERSION
+          allow-initial-development-versions: true
+          prepend: true
+          changelog-file: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
