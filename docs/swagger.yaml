@@ -1,0 +1,95 @@
+basePath: /api
+definitions:
+  models.RPIRankingData:
+    properties:
+      ranking:
+        type: integer
+      rpi:
+        type: number
+      teamName:
+        type: string
+    type: object
+  responses.HealthCheckResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  responses.VersionResponse:
+    properties:
+      version:
+        type: string
+    type: object
+info:
+  contact:
+    email: omar.crosby@gmail.com
+    name: API Support
+  description: This is a server that provides ECNL related information.
+  termsOfService: http://swagger.io/terms/
+  title: ECNL API
+  version: "1.0"
+paths:
+  /v1/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if the API is up and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.HealthCheckResponse'
+      summary: Health Check
+      tags:
+      - Admin
+  /v1/rpi/{division}:
+    get:
+      consumes:
+      - application/json
+      description: Calculates the RPI rankings for all teams
+      parameters:
+      - description: Division
+        enum:
+        - G2006/2005
+        - G2008
+        - G2009
+        - G2010
+        - G2011
+        - B2006/2005
+        - B2008
+        - B2009
+        - B2010
+        - B2011
+        in: path
+        name: division
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.RPIRankingData'
+            type: array
+      summary: Examines the schedule and calculates the RPI rankings for all teams
+      tags:
+      - RPI
+  /v1/version:
+    get:
+      consumes:
+      - application/json
+      description: Get the current version of the API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.VersionResponse'
+      summary: Get the API's current version
+      tags:
+      - Admin
+swagger: "2.0"

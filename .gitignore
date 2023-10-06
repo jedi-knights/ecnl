@@ -26,6 +26,12 @@ go.work
 # Test Results
 junit.xml
 
-node_modules
-
 package-lock.json
+
+node_modules/
+
+client/.angular
+client/dist
+output
+
+ecnl

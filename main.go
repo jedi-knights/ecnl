@@ -23,6 +23,15 @@ package main
 
 import "github.com/jedi-knights/ecnl/cmd"
 
+// @title ECNL API
+// @version 1.0
+// @description This is a server that provides ECNL related information.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.email omar.crosby@gmail.com
+
+// @BasePath /api
 func main() {
 	cmd.Execute()
 }

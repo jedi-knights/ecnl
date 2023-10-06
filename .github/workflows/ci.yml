@@ -12,15 +12,13 @@ on:
 
 env:
   GO_VERSION: 1.21
+  DOCKERHUB_ORG: jediknights
+
 
 jobs:
   Analyze:
-    strategy:
-      matrix:
-        go-version: [1.21]
-        os: [ubuntu-latest]
     name: lint
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -78,7 +76,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pwd
-          ls          
+          ls
           go install go.uber.org/mock/mockgen@latest
           go install github.com/jstemmer/go-junit-report@latest
           go install github.com/onsi/ginkgo/v2/ginkgo
@@ -118,6 +116,45 @@ jobs:
         run: |
           go build -ldflags="-s -w" main.go
 
+      - name: Run Semantic Release
+        uses: go-semantic-release/action@v1
+        with:
+            hooks: goreleaser
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            update-file: VERSION
+            allow-initial-development-versions: true
+            prepend: true
+            changelog-file: CHANGELOG.md
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: COPY SSL Certificates
+        run: |
+          mkdir -p /usr/local/share/ca-certificates
+          cp ./certs/*.crt /usr/local/share/ca-certificates
+          update-ca-certificates
+          echo "$CERT_CONTENT" > /usr/local/share/ca-certificates/localhost.crt
+          echo "$CERT_KEY" > /usr/local/share/ca-certificates/localhost.key
+
+      - name: Log in to Docker Hub
+        run: |
+            echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build Docker Image
+        run: |
+            docker build -t ecnl-api .
+
+      - name: Tag Docker Image
+        run: |
+            docker tag ecnl-api ${{ env.DOCKERHUB_ORG }}/ecnl-api:$(date +%s)
+            docker tag ecnl-api ${{ env.DOCKERHUB_ORG }}/ecnl-api:${{ github.sha }}
+            docker tag ecnl-api ${{ env.DOCKERHUB_ORG }}/ecnl-api:latest
+
+      - name: Push Docker Image
+        run: |
+            docker push --all-tags ${{ env.DOCKERHUB_ORG }}/ecnl-api
+
+
   Release:
     needs: [Build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -138,9 +175,4 @@ jobs:
           git config --global user.email "omar.crosby@gmail.com"
           git config --global user.name "Omar Crosby"
 
-      - name: Run Semantic Release
-        uses: go-semantic-release/action@v1
-        with:
-          hooks: goreleaser
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

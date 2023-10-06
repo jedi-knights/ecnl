@@ -4,8 +4,12 @@
   "description": "A Go module to provide access to ECNL data.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "husky install"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/config-conventional": "^17.7.0",
+    "husky": "^8.0.3"
+  }
 }

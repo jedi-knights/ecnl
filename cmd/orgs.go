@@ -42,8 +42,10 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var err error
-		var organizations []models.Organization
+		var (
+			err           error
+			organizations []models.Organization
+		)
 
 		service := services.NewTGSService()
 
@@ -57,8 +59,8 @@ to quickly create a Cobra application.`,
 			fmt.Printf("There are a total of %d organizations.\n", len(organizations))
 		}
 
-		for offset, organization := range organizations {
-			fmt.Printf("\t%d: %s\n", offset, organization.String())
+		for _, organization := range organizations {
+			fmt.Printf("\t%s\n", organization.String())
 		}
 	},
 }
