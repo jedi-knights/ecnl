@@ -25,9 +25,12 @@ jobs:
           go-version: ${{ matrix.go-version }}
           cache: false
 
+      - name: Install Dependencies
+        run: |
+            go install go.uber.org/mock/mockgen@v0.2.0
+
       - name: Generate Mocks
         run: |
-          go install go.uber.org/mock/mockgen@v0.2.0
           go generate ./...
 
       - name: Lint
