@@ -75,11 +75,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pwd
-          ls
-          go install go.uber.org/mock/mockgen@latest
-          go install github.com/jstemmer/go-junit-report@latest
-          go install github.com/onsi/ginkgo/v2/ginkgo
+          go install go.uber.org/mock/mockgen@v0.2.0
+          go install github.com/onsi/ginkgo/v2/ginkgo@v2.12.1
 
       - name: Generate Mocks
         run: go generate ./...
