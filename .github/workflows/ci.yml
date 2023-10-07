@@ -11,58 +11,36 @@ on:
       - '**'
 
 env:
-  GO_VERSION: 1.21
-  DOCKERHUB_ORG: jediknights
-
+  GO_VERSION: 1.21.2
 
 jobs:
   Analyze:
-    name: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: ${{ env.GO_VERSION }}
           cache: false
 
-      - name: Generate Mocks
+      - name: Install Dependencies
         run: |
-          go install go.uber.org/mock/mockgen@latest
-          go generate ./...
+            curl -Lo hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+            chmod +x hadolint
+            make deps
+
+      - name: Lint Dockerfile
+        run: ./hadolint Dockerfile
+
+      - name: Generate Mocks
+        run: make mocks
 
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
-          # Require: The version of golangci-lint to use.
-          # When `install-mode` is `binary` (default) the value can be v1.2 or v1.2.3 or `latest` to use the latest version.
-          # When `install-mode` is `goinstall` the value can be v1.2.3, `latest`, or the hash of a commit.
           version: v1.54
 
-          # Optional: working directory, useful for monorepos
-          # working-directory: somedir
-
-          # Optional: golangci-lint command line arguments.
-          #
-          # Note: By default, the `.golangci.yml` file should be at the root of the repository.
-          # The location of the configuration file can be changed by using `--config=`
-          # args: --timeout=30m --config=/my/path/.golangci.yml --issues-exit-code=0
-
-          # Optional: show only new issues if it's a pull request. The default value is `false`.
-          # only-new-issues: true
-
-          # Optional: if set to true, then all caching functionality will be completely disabled,
-          #           takes precedence over all other caching options.
-          # skip-cache: true
-
-          # Optional: if set to true, then the action won't cache or restore ~/go/pkg.
-          # skip-pkg-cache: true
-
-          # Optional: if set to true, then the action won't cache or restore ~/.cache/go-build.
-          # skip-build-cache: true
-
-          # Optional: The mode to install golangci-lint. It can be 'binary' or 'goinstall'.
-          # install-mode: "goinstall"
   Test:
     runs-on: ubuntu-latest
     steps:
@@ -74,18 +52,13 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
 
       - name: Install Dependencies
-        run: |
-          pwd
-          ls
-          go install go.uber.org/mock/mockgen@latest
-          go install github.com/jstemmer/go-junit-report@latest
-          go install github.com/onsi/ginkgo/v2/ginkgo
+        run: make deps
 
       - name: Generate Mocks
-        run: go generate ./...
+        run: make mocks
 
       - name: Test
-        run: ginkgo --junit-report=junit.xml ./...
+        run: make test
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
@@ -109,12 +82,10 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
 
       - name: Install Dependencies
-        run: |
-          go mod download
+        run: make deps
 
       - name: Build
-        run: |
-          go build -ldflags="-s -w" main.go
+        run: make build
 
       - name: Run Semantic Release
         uses: go-semantic-release/action@v1
@@ -128,32 +99,26 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: COPY SSL Certificates
-        run: |
-          mkdir -p /usr/local/share/ca-certificates
-          cp ./certs/*.crt /usr/local/share/ca-certificates
-          update-ca-certificates
-          echo "$CERT_CONTENT" > /usr/local/share/ca-certificates/localhost.crt
-          echo "$CERT_KEY" > /usr/local/share/ca-certificates/localhost.key
+#      - name: COPY SSL Certificates
+#        run: |
+#          mkdir -p /usr/local/share/ca-certificates
+#          cp ./certs/*.crt /usr/local/share/ca-certificates
+#          update-ca-certificates
+#          echo "$CERT_CONTENT" > /usr/local/share/ca-certificates/localhost.crt
+#          echo "$CERT_KEY" > /usr/local/share/ca-certificates/localhost.key
 
       - name: Log in to Docker Hub
         run: |
             echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build Docker Image
-        run: |
-            docker build -t ecnl-api .
+        run: make docker-build
 
       - name: Tag Docker Image
-        run: |
-            docker tag ecnl-api ${{ env.DOCKERHUB_ORG }}/ecnl-api:$(date +%s)
-            docker tag ecnl-api ${{ env.DOCKERHUB_ORG }}/ecnl-api:${{ github.sha }}
-            docker tag ecnl-api ${{ env.DOCKERHUB_ORG }}/ecnl-api:latest
+        run: make docker-tag
 
       - name: Push Docker Image
-        run: |
-            docker push --all-tags ${{ env.DOCKERHUB_ORG }}/ecnl-api
-
+        run: make docker-push
 
   Release:
     needs: [Build]

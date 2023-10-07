@@ -1,6 +1,6 @@
 module github.com/jedi-knights/ecnl
 
-go 1.21.1
+go 1.21.2
 
 require (
 	github.com/jedi-knights/rpi v1.0.0

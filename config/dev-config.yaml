@@ -1,0 +1,5 @@
+env: development
+host: localhost
+port: 8081
+mongo:
+  uri: mongodb://localhost:27017

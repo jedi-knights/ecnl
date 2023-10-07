@@ -22,127 +22,117 @@ THE SOFTWARE.
 package cmd
 
 import (
-    "fmt"
-    _ "github.com/jedi-knights/ecnl/docs"
-    v1routes "github.com/jedi-knights/ecnl/pkg/routes/v1"
-    "github.com/labstack/echo/v4"
-    "github.com/labstack/echo/v4/middleware"
-    "github.com/labstack/gommon/log"
-    "github.com/spf13/cobra"
-    "github.com/spf13/viper"
-    echoSwagger "github.com/swaggo/echo-swagger"
-    "net/http"
+	_ "github.com/jedi-knights/ecnl/docs"
+	v1routes "github.com/jedi-knights/ecnl/pkg/routes/v1"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	"net/http"
 )
 
 // apiCmd represents the api command
 var apiCmd = &cobra.Command{
-    Use:   "api",
-    Short: "A Restful API for providing ECNL data",
-    Long: `A longer description that spans multiple lines and likely contains examples
+	Use:   "api",
+	Short: "A Restful API for providing ECNL data",
+	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-    Run: func(cmd *cobra.Command, args []string) {
-        var (
-            port    int
-            address string
-        )
+	Run: func(cmd *cobra.Command, args []string) {
+		// Set some sane default values in case they are not set in the config file.
+		viper.SetDefault("env", "development")
+		viper.SetDefault("mongo.uri", "mongodb://localhost:27017/ecnl")
 
-        // Set some sane default values in case they are not set in the config file.
-        viper.SetDefault("env", "development")
-        viper.SetDefault("port", 8081)
-        viper.SetDefault("mongo.uri", "mongodb://localhost:27017/ecnl")
+		env := viper.GetString("env")
 
-        env := viper.GetString("env")
+		e := echo.New()
 
-        e := echo.New()
+		switch env {
+		case "development":
+			log.Printf("Development environment")
 
-        switch env {
-        case "development":
-            port = viper.GetInt("port")
-            log.Printf("Development environment")
+			e.Logger.SetLevel(log.DEBUG)
+		case "production":
+			log.Printf("Production environment")
 
-            e.Logger.SetLevel(log.DEBUG)
-        case "production":
-            port = 443
-            log.Printf("Production environment")
+			e.HideBanner = true
+			e.Logger.SetLevel(log.INFO)
 
-            e.HideBanner = true
-            e.Logger.SetLevel(log.INFO)
+			// Setup SSL/TLS
+			// Redirect all HTTP requests to HTTPS
+			e.Pre(middleware.HTTPSRedirect())
+		default:
+			// Do nothing for now on an unknown environment.
+			log.Fatalf("Unknown environment: %s expected development|production", env)
+		}
 
-            // Setup SSL/TLS
-            // Redirect all HTTP requests to HTTPS
-            e.Pre(middleware.HTTPSRedirect())
-        default:
-            // Do nothing for now on an unknown environment.
-            log.Fatalf("Unknown environment: %s expected development|production", env)
-        }
+		e.Logger.Info("Starting server")
 
-        address = fmt.Sprintf("127.0.0.1:%d", port)
+		// e.Use(middleware.CORS())
 
-        e.Logger.Info("Starting server")
+		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"*"},
+			AllowMethods: []string{
+				echo.GET,
+				echo.PUT,
+				echo.POST,
+				echo.DELETE,
+				echo.PATCH,
+				echo.HEAD,
+				echo.OPTIONS,
+				echo.CONNECT,
+				echo.TRACE,
+			},
+		}))
 
-        // e.Use(middleware.CORS())
+		e.Pre(middleware.RemoveTrailingSlash())
+		e.Pre(middleware.Logger())
 
-        e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-            AllowOrigins: []string{"*"},
-            AllowMethods: []string{
-                echo.GET,
-                echo.PUT,
-                echo.POST,
-                echo.DELETE,
-                echo.PATCH,
-                echo.HEAD,
-                echo.OPTIONS,
-                echo.CONNECT,
-                echo.TRACE,
-            },
-        }))
+		v1 := e.Group("/api/v1")
 
-        e.Pre(middleware.RemoveTrailingSlash())
-        e.Pre(middleware.Logger())
+		v1.GET("/health", v1routes.HandleHealthCheck)
+		v1.GET("/version", v1routes.HandleVersion)
+		v1.GET("/rpi/:division", v1routes.HandleGetRPIRankings)
 
-        v1 := e.Group("/api/v1")
+		e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-        v1.GET("/health", v1routes.HandleHealthCheck)
-        v1.GET("/version", v1routes.HandleVersion)
-        v1.GET("/rpi/:division", v1routes.HandleGetRPIRankings)
+		// Redirect root path to /swagger/index.html
+		e.GET("/", func(c echo.Context) error {
+			return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+		})
 
-        e.GET("/swagger/*", echoSwagger.WrapHandler)
+		// Redirect /swagger to /swagger/index.html
+		e.GET("/swagger", func(c echo.Context) error {
+			return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+		})
 
-        // Redirect root path to /swagger/index.html
-        e.GET("/", func(c echo.Context) error {
-            return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
-        })
-
-        // Redirect /swagger to /swagger/index.html
-        e.GET("/swagger", func(c echo.Context) error {
-            return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
-        })
-
-        if env == "production" {
-            certFile := viper.GetString("ssl.cert")
-            keyFile := viper.GetString("ssl.key")
-
-            e.Logger.Fatal(e.StartTLS(address, certFile, keyFile))
-        } else {
-            e.Logger.Fatal(e.Start(address))
-        }
-    },
+		//if env == "production" {
+		//	certFile := viper.GetString("ssl.cert")
+		//	keyFile := viper.GetString("ssl.key")
+		//
+		//	e.Logger.Fatal(e.StartTLS(":8080", certFile, keyFile))
+		//} else {
+		//	e.Logger.Fatal(e.Start(":8080"))
+		//}
+		e.Logger.Fatal(e.Start(":8080"))
+	},
 }
 
 func init() {
-    rootCmd.AddCommand(apiCmd)
+	rootCmd.AddCommand(apiCmd)
 
-    // Here you will define your flags and configuration settings.
+	// Here you will define your flags and configuration settings.
 
-    // Cobra supports Persistent Flags which will work for this command
-    // and all subcommands, e.g.:
-    // apiCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// apiCmd.PersistentFlags().String("foo", "", "A help for foo")
 
-    // Cobra supports local flags which will only run when this command
-    // is called directly, e.g.:
-    // apiCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// apiCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
