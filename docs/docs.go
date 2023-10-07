@@ -123,6 +123,9 @@ const docTemplate = `{
                 "rpi": {
                     "type": "number"
                 },
+                "teamId": {
+                    "type": "integer"
+                },
                 "teamName": {
                     "type": "string"
                 }
