@@ -8,6 +8,7 @@ clean:
 
 deps:
 	go mod tidy
+	go install golang.org/x/tools/gopls@v0.13.2
 	go install github.com/swaggo/swag/cmd/swag@v1.16.2
 	go install go.uber.org/mock/mockgen@v0.2.0
 	go install github.com/onsi/ginkgo/v2/ginkgo@v2.12.1
@@ -17,7 +18,7 @@ swagger:
 	swag init -g main.go
 
 mocks:
-	go generate -v ./...
+	go generate -x ./...
 
 build: clean deps swagger
 	go build -o ecnl -ldflags="-s -w" main.go
