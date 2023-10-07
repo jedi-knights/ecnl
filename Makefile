@@ -37,7 +37,7 @@ docker-build:
 
 docker-tag:
 	docker tag ecnl-api jediknights/ecnl-api:latest
-	docker tag ecnl-api jediknights/ecnl-api:$(date +%s)
+	#docker tag ecnl-api jediknights/ecnl-api:$(date +%s)
 
 docker-push:
 	docker push --all-tags jediknights/ecnl-api
