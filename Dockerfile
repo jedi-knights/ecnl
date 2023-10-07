@@ -8,8 +8,6 @@ WORKDIR /app
 # Copy the local package files to the container's workspace
 COPY . .
 
-RUN make deps
-RUN make swagger
 RUN make build
 
 # Deploy Stage
