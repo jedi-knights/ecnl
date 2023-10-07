@@ -1,3 +1,5 @@
+all: lint test build
+
 clean:
 	rm -f ecnl
 	rm -f junit.xml
@@ -17,10 +19,10 @@ swagger:
 mocks:
 	go generate -v ./...
 
-build: clean
+build: clean deps swagger
 	go build -o ecnl -ldflags="-s -w" main.go
 
-test: clean
+test: clean mocks
 	ginkgo --junit-report=junit.xml ./...
 
 lint:
