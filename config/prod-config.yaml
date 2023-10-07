@@ -1,6 +1,4 @@
 env: production
-host: localhost
-port: 443
 ssl:
   cert: ~/certs/api/cert.pem
   key: ~/certs/api/key.pem

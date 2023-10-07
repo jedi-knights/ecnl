@@ -1,0 +1,42 @@
+# Files and directories commonly ignored in Angular projects
+
+# Node.js modules and dependencies
+node_modules/
+
+# Build artifacts
+dist/
+
+# Development and build files
+*.log
+*.swp
+*.swo
+*.md
+*.gitignore
+*.npmignore
+*.yarnignore
+*.env
+*.env.*
+*.lock
+*.bak
+*.tmp
+*.temp
+*.sublime*
+*.vscode*
+*.idea/
+.DS_Store
+Thumbs.db
+
+# Editor-specific configuration
+.editorconfig
+.eslintrc
+.prettierrc
+*.iml
+
+# Version control directories
+.git/
+.svn/
+.hg/
+
+# Output of 'ng build' command
+.angular
+

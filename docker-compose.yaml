@@ -1,0 +1,44 @@
+version: '3'
+services:
+    mongo-db:
+        image: mongo:latest
+        container_name: database
+        ports:
+            - "3002:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+        volumes:
+            - ~/mongo/data:/data/db
+        networks:
+            - ecnl-network
+
+    echo-api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: api
+        ports:
+            - "3001:8080"
+        depends_on:
+            - mongo-db
+        environment:
+            MONGODB_URI: mongodb://database/ecnl
+        networks:
+            - ecnl-network
+
+    angular-ui:
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+        container_name: interface
+        ports:
+            - "3000:80"
+        depends_on:
+            - echo-api
+        networks:
+            - ecnl-network
+
+networks:
+    ecnl-network:
+        driver: bridge

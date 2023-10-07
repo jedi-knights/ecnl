@@ -16,7 +16,7 @@ func MustGetClient(ctx context.Context) *mongo.Client {
 		client *mongo.Client
 	)
 
-	connectionString := viper.Get("mongo.uri").(string)
+	connectionString := viper.GetString("MONGODB_URI")
 
 	clientOptions := options.Client().ApplyURI(connectionString)
 

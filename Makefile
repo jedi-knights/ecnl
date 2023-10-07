@@ -32,15 +32,23 @@ lint:
 run: swagger
 	go run main.go api
 
-docker-build:
-	docker build -t ecnl-api .
+# Prunes both dangling images and unused containers
+docker-prune:
+	docker system prune --all --force
 
-docker-tag:
-	docker tag ecnl-api jediknights/ecnl-api:latest
-	#docker tag ecnl-api jediknights/ecnl-api:$(date +%s)
+docker-build:
+	docker build -t jediknights/ecnl-api .
+	docker tag jediknights/ecnl-api jediknights/ecnl-api:latest
+
+docker-build-client:
+	docker build -t jediknights/ecnl-client -f ./client/Dockerfile ./client
+	docker tag jediknights/ecnl-client jediknights/ecnl-client:latest
 
 docker-push:
 	docker push --all-tags jediknights/ecnl-api
+
+docker-push-client:
+	docker push --all-tags jediknights/ecnl-client
 
 docker-mongo:
 	docker run -it --rm --name mongodb -v ~/mongo/data:/data/db -p 27017:27017 mongo:latest

@@ -1043,8 +1043,19 @@ Each result looks like this
 }
 ```
 
+Running a shell in the image
+
+> docker run -it ecnl-angular-ui /bin/sh
+
+
+Running a container in the forground
+
+> docker run -it -p 8080:80 ecnl-angular-ui
+
 ## References
 
 * [ECNL](https://www.ecnlgirls.com/)
 * [ECNL Schedule](https://www.ecnlgirls.com/schedule/)
 * [Total Global Sports Swagger](https://public.totalglobalsports.com/swagger/index.html)
+* [Building Minimal Docker containers for Go Applications](https://www.cloudbees.com/blog/building-minimal-docker-containers-for-go-applications)
+* [Docker Networking](https://docs.docker.com/network/)

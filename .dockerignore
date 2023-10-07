@@ -12,7 +12,7 @@ scripts
 .goreleaser.yaml
 .releaserc.js
 commitlint.config.js
-compose.yaml
+docker-compose.yaml
 Dockerfile
 LICENSE
 MONGO.md

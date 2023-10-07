@@ -114,11 +114,14 @@ jobs:
       - name: Build Docker Image
         run: make docker-build
 
-      - name: Tag Docker Image
-        run: make docker-tag
+      - name: Build Client Docker Image
+        run: make docker-build-client
 
       - name: Push Docker Image
         run: make docker-push
+
+      - name: Push Client Docker Image
+        run: make docker-push-client
 
   Release:
     needs: [Build]
