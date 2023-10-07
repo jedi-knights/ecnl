@@ -1,5 +1,6 @@
-# Use an official Golang runtime as a parent image
-FROM golang:1.17
+# Build Stage
+FROM golang:1.21.2 AS BuildStage
+LABEL stage=build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -7,14 +8,23 @@ WORKDIR /app
 # Copy the local package files to the container's workspace
 COPY . .
 
-# Copy and rename the YAML configuration file into the container
-COPY config/prod-config.yaml /app/config.yaml
+RUN make deps
+RUN make swagger
+RUN make build
 
-# Build the Go application inside the container
-RUN go build -o ecnl
+# Deploy Stage
+FROM alpine:3.14 AS DeployStage
+LABEL stage=deploy
+
+WORKDIR /app
+
+COPY --from=BuildStage /app/ecnl ./ecnl
+COPY config/prod-config.yaml ./config.yaml
+
+USER nonroot:nonroot
 
 # Expose the port that your Go Echo API will listen on
 EXPOSE 8080
 
 # Define the command to run your application
-CMD ["./ecnl", "api"]
+ENTRYPOINT ["./ecnl", "api"]
