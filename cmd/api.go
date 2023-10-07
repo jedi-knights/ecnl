@@ -111,14 +111,15 @@ to quickly create a Cobra application.`,
 			return c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
 		})
 
-		if env == "production" {
-			certFile := viper.GetString("ssl.cert")
-			keyFile := viper.GetString("ssl.key")
-
-			e.Logger.Fatal(e.StartTLS(":8080", certFile, keyFile))
-		} else {
-			e.Logger.Fatal(e.Start(":8080"))
-		}
+		//if env == "production" {
+		//	certFile := viper.GetString("ssl.cert")
+		//	keyFile := viper.GetString("ssl.key")
+		//
+		//	e.Logger.Fatal(e.StartTLS(":8080", certFile, keyFile))
+		//} else {
+		//	e.Logger.Fatal(e.Start(":8080"))
+		//}
+		e.Logger.Fatal(e.Start(":8080"))
 	},
 }
 
